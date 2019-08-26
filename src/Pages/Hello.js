@@ -1,5 +1,6 @@
 import React from 'react';
 import '../App.css';
+import {connect} from 'react-redux';
 
 import Title from '../Components/Title';
 
@@ -30,6 +31,7 @@ class Hello extends React.Component {
   };
   render () {
     //jsx expression {}
+    const {item} = this.props
     return (
       <div className="App">
         <header className="App-header">
@@ -60,10 +62,27 @@ class Hello extends React.Component {
           >
             <p style={{fontSize: 25, color: 'white'}}>Ganti Nama</p>
           </button>
+          {item.itemList
+            ? item.itemList.map ((item, index) => {
+                // console.log (index, item.item.name);
+                return (
+                  <li key={index} style={{fontSize: 30, fontWeight: 'bold'}}>
+                    <p>{item.item.name}</p>
+                    <img src={item.item.images.icon} alt="item" />
+                  </li>
+                );
+              })
+            : <p style={{fontSize: 100, color: 'white'}}>Loading Fetch...</p>}
         </header>
       </div>
     );
   }
 }
 
-export default Hello;
+const mapStateToProps = state => {
+  return {
+    item: state.item,
+  };
+};
+
+export default connect (mapStateToProps) (Hello);

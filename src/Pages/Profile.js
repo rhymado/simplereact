@@ -1,32 +1,29 @@
 import React from 'react';
-import Axios from 'axios';
+import {connect} from 'react-redux'; // higher order component HOC
+
+import {getItem} from '../Publics/Actions/item';
 
 class Profile extends React.Component {
   state = {
-    getAPI: [],
+    getItem: [],
   };
-  componentDidMount = () => {
-    Axios.get ('https://fortnite-api.theapinetwork.com/store/get', {
-      headers: {
-        Authorization: process.env.REACT_APP_KEY,
-      },
-    })
-      .then (res => {
-        this.setState ({getAPI: res.data.data});
-        console.log ('getAPI =', this.state.getAPI);
-      })
-      .catch (err => console.log ('error =', err));
+  componentDidMount = async () => {
+    await this.props.dispatch (getItem ());
+    this.setState ({
+      getItem: this.props.item,
+    });
   };
   render () {
-    const {getAPI} = this.state;
+    const {getItem} = this.state;
     return (
       <div style={{backgroundColor: 'lightgreen'}}>
         <h1>Mamanx Garox</h1>
         <h2>Semarang, 19 Agustus 1990</h2>
         <ul style={{display: 'flex', flexDirection: 'column-reverse'}}>
-          {getAPI.length > 0
-            ? getAPI.map ((item, index) => {
-                console.log (index, item.item.name);
+          {/* {console.log (!getItem.isLoading)} */}
+          {getItem.itemList
+            ? getItem.itemList.map ((item, index) => {
+                // console.log (index, item.item.name);
                 return (
                   <li key={index} style={{fontSize: 30, fontWeight: 'bold'}}>
                     <p>{item.item.name}</p>
@@ -41,4 +38,10 @@ class Profile extends React.Component {
   }
 }
 
-export default Profile;
+const mapStateToProps = state => {
+  return {
+    item: state.item,
+  };
+};
+
+export default connect (mapStateToProps) (Profile);
